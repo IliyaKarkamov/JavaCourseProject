@@ -1,13 +1,12 @@
-package engine.core;
+package engine.core.window;
 
-import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class Window {
+final class Window implements IWindow {
     private long windowHandle = NULL;
 
     private String title;
@@ -17,7 +16,7 @@ public class Window {
 
     private boolean verticalSync = false;
 
-    public Window() {
+    Window(String title, int width, int height) {
         GlfwInitializer.initialize();
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -25,7 +24,7 @@ public class Window {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_FALSE);
 
-        windowHandle = glfwCreateWindow(800, 600, "Hello World!", NULL, NULL);
+        windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
 
         if (windowHandle == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
@@ -103,37 +102,6 @@ public class Window {
             this.width = width;
             this.height = height;
         });
-    }
-}
-
-final class GlfwInitializer {
-    private static boolean initialized = false;
-    private static int referenceCount = 0;
-
-    private GlfwInitializer() {
-    }
-
-    static void initialize() {
-        if (!initialized) {
-            doInit();
-            initialized = true;
-        }
-
-        ++referenceCount;
-    }
-
-    static void terminate() {
-        if (--referenceCount == 0) {
-            glfwTerminate();
-            glfwSetErrorCallback(null).free();
-        }
-    }
-
-    private static void doInit() {
-        GLFWErrorCallback.createPrint(System.err).set();
-
-        if (!glfwInit())
-            throw new IllegalStateException("Unable to initialize GLFW");
     }
 }
 

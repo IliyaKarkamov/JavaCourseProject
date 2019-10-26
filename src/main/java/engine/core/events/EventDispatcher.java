@@ -11,11 +11,17 @@ public class EventDispatcher {
         Vector<EventListener> listeners = eventListeners.get(eventClass);
 
         if (listeners != null) {
-            listeners.forEach(listener -> listener.onEvent(event));
+            for (EventListener listener : listeners) {
+                if (listener.onEvent(event))
+                    break;
+            }
         }
     }
 
     public void listen(Class<? extends Event> eventClass, EventListener listener) {
+        Vector<EventListener> defaultValue = new Vector<>();
 
+        Vector<EventListener> listeners = eventListeners.getOrDefault(eventClass, defaultValue);
+        listeners.add(listener);
     }
 }
