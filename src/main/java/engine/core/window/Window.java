@@ -1,5 +1,8 @@
 package engine.core.window;
 
+import engine.core.events.IEventDispatcher;
+import engine.core.window.events.WindowCloseEvent;
+import engine.core.window.events.WindowResizeEvent;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -7,6 +10,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 final class Window implements IWindow {
+    private IEventDispatcher eventDispatcher;
     private long windowHandle = NULL;
 
     private String title;
@@ -16,7 +20,9 @@ final class Window implements IWindow {
 
     private boolean verticalSync = false;
 
-    Window(String title, int width, int height) {
+    Window(IEventDispatcher eventDispatcher, String title, int width, int height) {
+        this.eventDispatcher = eventDispatcher;
+
         GlfwInitializer.initialize();
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -101,6 +107,12 @@ final class Window implements IWindow {
         glfwSetWindowSizeCallback(windowHandle, (window, width, height) -> {
             this.width = width;
             this.height = height;
+
+            eventDispatcher.publish(new WindowResizeEvent(width, height));
+        });
+
+        glfwSetWindowCloseCallback(windowHandle, window -> {
+            eventDispatcher.publish(new WindowCloseEvent());
         });
     }
 }

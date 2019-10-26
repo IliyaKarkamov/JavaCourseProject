@@ -4,24 +4,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-public class EventDispatcher {
-    Map<Class<? extends Event>, Vector<EventListener>> eventListeners = new HashMap<>();
+final class EventDispatcher implements IEventDispatcher {
+    private Map<Class<? extends IEvent>, Vector<IEventListener>> eventListeners = new HashMap<>();
 
-    public void publish(Class<? extends Event> eventClass, Event event) {
-        Vector<EventListener> listeners = eventListeners.get(eventClass);
+    public <T extends IEvent> void publish(T event) {
+        Vector<IEventListener> listeners = eventListeners.get(event.getClass());
 
         if (listeners != null) {
-            for (EventListener listener : listeners) {
+            for (IEventListener listener : listeners) {
                 if (listener.onEvent(event))
                     break;
             }
         }
     }
 
-    public void listen(Class<? extends Event> eventClass, EventListener listener) {
-        Vector<EventListener> defaultValue = new Vector<>();
-
-        Vector<EventListener> listeners = eventListeners.getOrDefault(eventClass, defaultValue);
-        listeners.add(listener);
+    public void listen(Class<? extends IEvent> eventClass, IEventListener listener) {
+        eventListeners.computeIfAbsent(eventClass, X -> new Vector<>()).add(listener);
     }
 }
