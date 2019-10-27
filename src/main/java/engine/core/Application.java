@@ -1,12 +1,12 @@
 package engine.core;
 
 import engine.core.events.EventDispatcher;
-import engine.core.events.IEventDispatcher;
-import engine.core.input.IKeyboard;
-import engine.core.input.IMouse;
+import engine.core.events.interfaces.IEventDispatcher;
+import engine.core.input.interfaces.IKeyboard;
+import engine.core.input.interfaces.IMouse;
 import engine.core.input.Keyboard;
 import engine.core.input.Mouse;
-import engine.core.window.IWindow;
+import engine.core.window.interfaces.IWindow;
 import engine.core.window.Window;
 
 import static org.lwjgl.opengl.GL11C.*;

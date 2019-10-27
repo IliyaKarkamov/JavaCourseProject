@@ -1,4 +1,4 @@
-package engine.core.window;
+package engine.core.window.interfaces;
 
 public interface IWindow {
     String getTitle();

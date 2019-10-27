@@ -1,6 +1,6 @@
 package engine.core.input.events;
 
-import engine.core.events.IEvent;
+import engine.core.events.interfaces.IEvent;
 import engine.core.input.enums.MouseButton;
 
 public class MouseButtonReleaseEvent implements IEvent {

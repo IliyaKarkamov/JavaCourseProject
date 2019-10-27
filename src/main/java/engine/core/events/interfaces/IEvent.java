@@ -1,4 +1,4 @@
-package engine.core.events;
+package engine.core.events.interfaces;
 
 public interface IEvent {
     String getName();

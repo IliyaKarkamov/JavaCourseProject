@@ -1,4 +1,4 @@
-package engine.core.events;
+package engine.core.events.interfaces;
 
 public interface IEventDispatcher {
     <T extends IEvent> void publish(T event);

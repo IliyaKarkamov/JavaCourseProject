@@ -1,12 +1,13 @@
 package engine.core.input;
 
-import engine.core.events.IEventDispatcher;
-import engine.core.events.IEventListener;
+import engine.core.events.interfaces.IEventDispatcher;
+import engine.core.events.interfaces.IEventListener;
 import engine.core.input.enums.MouseButton;
 import engine.core.input.events.MouseButtonPressEvent;
 import engine.core.input.events.MouseButtonReleaseEvent;
 import engine.core.input.events.MouseMoveEvent;
 import engine.core.input.events.MouseScrollEvent;
+import engine.core.input.interfaces.IMouse;
 import org.joml.Vector2f;
 
 import java.util.EnumMap;

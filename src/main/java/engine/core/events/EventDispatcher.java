@@ -1,5 +1,9 @@
 package engine.core.events;
 
+import engine.core.events.interfaces.IEvent;
+import engine.core.events.interfaces.IEventDispatcher;
+import engine.core.events.interfaces.IEventListener;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;

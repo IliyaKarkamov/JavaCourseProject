@@ -1,4 +1,4 @@
-package engine.core.input;
+package engine.core.input.interfaces;
 
 import engine.core.input.enums.KeyboardButton;
 

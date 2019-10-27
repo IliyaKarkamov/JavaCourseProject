@@ -1,11 +1,12 @@
 package engine.core.window;
 
-import engine.core.events.IEventDispatcher;
+import engine.core.events.interfaces.IEventDispatcher;
 import engine.core.input.enums.KeyboardButton;
 import engine.core.input.enums.MouseButton;
 import engine.core.input.events.*;
 import engine.core.window.events.WindowCloseEvent;
 import engine.core.window.events.WindowResizeEvent;
+import engine.core.window.interfaces.IWindow;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;

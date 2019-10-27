@@ -1,10 +1,11 @@
 package engine.core.input;
 
-import engine.core.events.IEventDispatcher;
-import engine.core.events.IEventListener;
+import engine.core.events.interfaces.IEventDispatcher;
+import engine.core.events.interfaces.IEventListener;
 import engine.core.input.enums.KeyboardButton;
 import engine.core.input.events.KeyPressEvent;
 import engine.core.input.events.KeyReleaseEvent;
+import engine.core.input.interfaces.IKeyboard;
 
 import java.util.EnumMap;
 

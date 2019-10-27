@@ -1,6 +1,6 @@
 package engine.core.window.events;
 
-import engine.core.events.IEvent;
+import engine.core.events.interfaces.IEvent;
 
 public final class WindowResizeEvent implements IEvent {
     private int width;

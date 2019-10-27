@@ -1,6 +1,6 @@
 package engine.core.input.events;
 
-import engine.core.events.IEvent;
+import engine.core.events.interfaces.IEvent;
 
 public class MouseScrollEvent implements IEvent {
     private float offsetX;
