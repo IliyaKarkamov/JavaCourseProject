@@ -1,46 +1,79 @@
 package engine.core;
 
-import engine.core.events.EventDispatcherFactory;
-import engine.core.events.IEvent;
+import engine.core.events.EventDispatcher;
 import engine.core.events.IEventDispatcher;
-import engine.core.events.IEventListener;
+import engine.core.input.IKeyboard;
+import engine.core.input.IMouse;
+import engine.core.input.Keyboard;
+import engine.core.input.Mouse;
 import engine.core.window.IWindow;
-import engine.core.window.WindowFactory;
-import engine.core.window.events.WindowCloseEvent;
+import engine.core.window.Window;
 
 import static org.lwjgl.opengl.GL11C.*;
 
-public class Application {
+public abstract class Application {
     private IWindow window;
     private IEventDispatcher eventDispatcher;
 
+    private IKeyboard keyboard;
+    private IMouse mouse;
+
     private boolean isRunning;
 
-    public Application() {
-        eventDispatcher = EventDispatcherFactory.create();
-        window = WindowFactory.create(eventDispatcher, "Iliya's window", 800, 600);
+    protected Application() {
+        eventDispatcher = new EventDispatcher();
+        window = new Window(eventDispatcher, "Iliya's window", 800, 600);
 
-        eventDispatcher.listen(WindowCloseEvent.class, new IEventListener() {
-            @Override
-            public boolean onEvent(IEvent event) {
-                isRunning = false;
-                return false;
-            }
-        });
+        keyboard = new Keyboard(eventDispatcher);
+        mouse = new Mouse(eventDispatcher);
     }
+
+    protected abstract void update();
 
     public void run() {
         isRunning = true;
 
         window.show();
 
+        keyboard.start();
+        mouse.start();
+
         while (isRunning) {
             window.processMessages();
+
+            update();
 
             glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             window.swapBuffers();
         }
+
+        keyboard.stop();
+        mouse.stop();
+    }
+
+    protected IWindow getWindow() {
+        return window;
+    }
+
+    protected IEventDispatcher getEventDispatcher() {
+        return eventDispatcher;
+    }
+
+    protected IKeyboard getKeyboard() {
+        return keyboard;
+    }
+
+    protected IMouse getMouse() {
+        return mouse;
+    }
+
+    protected boolean isRunning() {
+        return isRunning;
+    }
+
+    protected void setRunning(boolean running) {
+        isRunning = running;
     }
 }
