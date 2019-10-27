@@ -14,7 +14,7 @@ public class SandboxApplication extends Application {
     }
 
     @Override
-    protected void update() {
+    protected void update(float delta) {
         if (getKeyboard().isKeyPressed(KeyboardButton.A)) {
             System.out.println("A pressed!");
         }
@@ -22,5 +22,7 @@ public class SandboxApplication extends Application {
         if (getMouse().isButtonPressed(MouseButton.MouseButtonLeft)) {
             System.out.println("Mouse left button pressed!");
         }
+
+        getWindow().setTitle("FPS: " + 1 / delta);
     }
 }

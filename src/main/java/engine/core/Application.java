@@ -12,11 +12,11 @@ import engine.core.window.Window;
 import static org.lwjgl.opengl.GL11C.*;
 
 public abstract class Application {
-    private IWindow window;
-    private IEventDispatcher eventDispatcher;
+    private final IWindow window;
+    private final IEventDispatcher eventDispatcher;
 
-    private IKeyboard keyboard;
-    private IMouse mouse;
+    private final IKeyboard keyboard;
+    private final IMouse mouse;
 
     private boolean isRunning;
 
@@ -28,20 +28,26 @@ public abstract class Application {
         mouse = new Mouse(eventDispatcher);
     }
 
-    protected abstract void update();
+    protected abstract void update(float delta);
 
     public void run() {
-        isRunning = true;
+        setRunning(true);
 
         window.show();
 
         keyboard.start();
         mouse.start();
 
+        long lastTime = System.nanoTime();
+
         while (isRunning) {
+            final long currentTime = System.nanoTime();
+            final float elapsedTime = (float) ((currentTime - lastTime) * 0.000000001); // elapsed time as seconds
+            lastTime = currentTime;
+
             window.processMessages();
 
-            update();
+            update(elapsedTime);
 
             glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -51,6 +57,7 @@ public abstract class Application {
 
         keyboard.stop();
         mouse.stop();
+        window.close();
     }
 
     protected IWindow getWindow() {
