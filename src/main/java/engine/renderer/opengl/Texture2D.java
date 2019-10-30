@@ -1,18 +1,24 @@
 package engine.renderer.opengl;
 
 import engine.renderer.opengl.enums.TextureFormat;
+import engine.renderer.opengl.exceptions.TextureLoadException;
 import engine.renderer.opengl.interfaces.ITexture2D;
 import org.lwjgl.opengl.GL46C;
+import org.lwjgl.system.MemoryStack;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
-import static org.lwjgl.stb.STBImage.stbi_load;
+import static org.lwjgl.stb.STBImage.*;
+
 
 public class Texture2D implements ITexture2D {
     private int id;
-    int width;
-    int height;
-    TextureFormat format;
+    private int width;
+    private int height;
+    private TextureFormat format;
 
     public Texture2D(ByteBuffer data, int width, int height, TextureFormat format) {
         id = GL46C.glGenTextures();
@@ -56,5 +62,42 @@ public class Texture2D implements ITexture2D {
     @Override
     public int getHeight() {
         return height;
+    }
+
+    public static ITexture2D create(String resource) throws TextureLoadException {
+        InputStream stream = Texture2D.class.getResourceAsStream(resource);
+
+        ByteBuffer image;
+
+        try {
+            image = ByteBuffer.wrap(stream.readAllBytes());
+        } catch (IOException e) {
+            throw new TextureLoadException("Failed to load a texture file. " + e.getMessage());
+        }
+
+        int width, height;
+
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer w = stack.mallocInt(1);
+            IntBuffer h = stack.mallocInt(1);
+            IntBuffer comp = stack.mallocInt(1);
+
+            if (!stbi_info_from_memory(image, w, h, comp)) {
+                throw new TextureLoadException("Failed to load a texture file." + System.lineSeparator() + stbi_failure_reason());
+            }
+
+            stbi_set_flip_vertically_on_load(true);
+
+            image = stbi_load_from_memory(image, w, h, comp, 0);
+
+            if (image == null) {
+                throw new TextureLoadException("Failed to load a texture file." + System.lineSeparator() + stbi_failure_reason());
+            }
+
+            width = w.get();
+            height = h.get();
+        }
+
+        return new Texture2D(image, width, height, TextureFormat.RGBA);
     }
 }
