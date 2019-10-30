@@ -13,7 +13,6 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.stb.STBImage.*;
 
-
 public class Texture2D implements ITexture2D {
     private int id;
     private int width;

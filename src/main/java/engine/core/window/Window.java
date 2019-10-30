@@ -8,6 +8,8 @@ import engine.core.window.events.WindowCloseEvent;
 import engine.core.window.events.WindowResizeEvent;
 import engine.core.window.interfaces.IWindow;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLUtil;
+import org.lwjgl.system.Callback;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -24,6 +26,8 @@ public final class Window implements IWindow {
 
     private boolean verticalSync = false;
 
+    Callback debugProc;
+
     public Window(IEventDispatcher eventDispatcher, String title, int width, int height) {
         this.eventDispatcher = eventDispatcher;
 
@@ -33,6 +37,7 @@ public final class Window implements IWindow {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_FALSE);
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
         windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
 
@@ -43,11 +48,16 @@ public final class Window implements IWindow {
 
         GL.createCapabilities();
 
+        debugProc = GLUtil.setupDebugMessageCallback();
+
         setEventCallbacks();
     }
 
     @Override
     public void close() {
+        if (debugProc != null)
+            debugProc.free();
+
         glfwFreeCallbacks(windowHandle);
         glfwDestroyWindow(windowHandle);
 

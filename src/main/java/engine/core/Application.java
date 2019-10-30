@@ -28,9 +28,12 @@ public abstract class Application {
         mouse = new Mouse(eventDispatcher);
     }
 
+    protected abstract void init();
     protected abstract void update(float delta);
 
     public void run() {
+        init();
+
         setRunning(true);
 
         window.show();
