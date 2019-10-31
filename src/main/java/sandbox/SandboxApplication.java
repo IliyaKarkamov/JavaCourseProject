@@ -65,11 +65,10 @@ public class SandboxApplication extends Application {
         }
 
         BufferLayout layout = new BufferLayout();
-        layout.addElement(new BufferElement(DataType.Float, "aPos", false));
+        layout.addElement(new BufferElement(DataType.Float3, "aPos", false));
 
         vertexBuffer.setLayout(layout);
 
-        vertexArray.bind();
         vertexArray.addVertexBuffer(vertexBuffer);
     }
 
@@ -85,8 +84,11 @@ public class SandboxApplication extends Application {
 
         getWindow().setTitle("FPS: " + 1 / delta);
 
+        GL46C.glClear(GL46C.GL_COLOR_BUFFER_BIT | GL46C.GL_DEPTH_BUFFER_BIT);
+
         shader.bind();
         vertexArray.bind();
+
         GL46C.glDrawArrays(GL46C.GL_TRIANGLES, 0, 3);
     }
 }

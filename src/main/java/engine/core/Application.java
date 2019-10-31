@@ -9,8 +9,6 @@ import engine.core.input.Mouse;
 import engine.core.window.interfaces.IWindow;
 import engine.core.window.Window;
 
-import static org.lwjgl.opengl.GL11C.*;
-
 public abstract class Application {
     private final IWindow window;
     private final IEventDispatcher eventDispatcher;
@@ -51,9 +49,6 @@ public abstract class Application {
             window.processMessages();
 
             update(elapsedTime);
-
-            glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             window.swapBuffers();
         }

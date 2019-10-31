@@ -11,7 +11,7 @@ import java.nio.IntBuffer;
 import java.util.Vector;
 
 public class VertexArray implements IVertexArray, AutoCloseable {
-    private int id = 0;
+    private int id;
     private int vertexBufferIndex = 0;
 
     private Vector<IVertexBuffer> vertexBuffers = new Vector<>();
@@ -42,16 +42,13 @@ public class VertexArray implements IVertexArray, AutoCloseable {
         for (int i = 0; i < elementsCount; i++) {
             final BufferElement element = layout.getElement(i);
 
-            IntBuffer intBuffer = BufferUtils.createIntBuffer(1);
-            intBuffer.put(element.getOffset());
-
             GL46C.glEnableVertexAttribArray(vertexBufferIndex);
             GL46C.glVertexAttribPointer(vertexBufferIndex,
                     element.getComponentCount(),
                     DataType.getValue(element.getType()),
                     element.isNormalized(),
                     layout.getStride(),
-                    intBuffer);
+                    element.getOffset());
 
             vertexBufferIndex++;
         }
@@ -83,7 +80,7 @@ public class VertexArray implements IVertexArray, AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         GL46C.glDeleteVertexArrays(id);
     }
 }
