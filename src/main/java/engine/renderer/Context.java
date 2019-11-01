@@ -6,6 +6,13 @@ import engine.renderer.opengl.interfaces.IVertexArray;
 import org.lwjgl.opengl.GL46C;
 
 public final class Context implements IContext {
+    public Context() {
+        System.out.println("Successfully initialized OpenGL context.");
+        System.out.println("Version: " + GL46C.glGetString(GL46C.GL_VERSION));
+        System.out.println("Vendor: " + GL46C.glGetString(GL46C.GL_VENDOR));
+        System.out.println("Renderer: " + GL46C.glGetString(GL46C.GL_RENDERER));
+    }
+
     @Override
     public void enable(Capability capability) {
         GL46C.glEnable(Capability.getValue(capability));

@@ -7,6 +7,7 @@ import engine.core.input.Mouse;
 import engine.core.input.interfaces.IKeyboard;
 import engine.core.input.interfaces.IMouse;
 import engine.core.window.Window;
+import engine.core.window.events.WindowResizeEvent;
 import engine.core.window.interfaces.IWindow;
 import engine.renderer.Context;
 import engine.renderer.interfaces.IContext;
@@ -30,6 +31,12 @@ public abstract class Application {
 
         keyboard = new Keyboard(eventDispatcher);
         mouse = new Mouse(eventDispatcher);
+
+        eventDispatcher.addListener(WindowResizeEvent.class, event -> {
+            WindowResizeEvent resizeEvent = (WindowResizeEvent) event;
+            context.setViewport(0, 0, resizeEvent.getWidth(), resizeEvent.getHeight());
+            return false;
+        });
     }
 
     protected abstract void init();

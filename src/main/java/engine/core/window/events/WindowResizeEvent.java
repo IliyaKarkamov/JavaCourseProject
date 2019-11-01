@@ -11,11 +11,11 @@ public final class WindowResizeEvent implements IEvent {
         this.height = height;
     }
 
-    int getWidth() {
+    public int getWidth() {
         return width;
     }
 
-    int getHeight() {
+    public int getHeight() {
         return height;
     }
 

@@ -121,7 +121,7 @@ public class SandboxApplication extends Application {
             e.printStackTrace();
         }
 
-        camera = new Camera(new Vector3f(100.f, 100.f, -10.f));
+        camera = new Camera(new Vector3f(100.f, 100.f, 50f));
 
         getContext().enable(Capability.CullFace);
     }
@@ -132,7 +132,7 @@ public class SandboxApplication extends Application {
 
     @Override
     protected void update(float delta) {
-        final float speed = 4.f * delta;
+        final float speed = 15.f * delta;
         final float dragSpeed = 20.f * delta;
         final Vector2f position = getMouse().getMousePosition();
 
