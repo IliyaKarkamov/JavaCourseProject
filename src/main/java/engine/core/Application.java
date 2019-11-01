@@ -2,19 +2,19 @@ package engine.core;
 
 import engine.core.events.EventDispatcher;
 import engine.core.events.interfaces.IEventDispatcher;
-import engine.core.input.interfaces.IKeyboard;
-import engine.core.input.interfaces.IMouse;
 import engine.core.input.Keyboard;
 import engine.core.input.Mouse;
-import engine.core.window.interfaces.IWindow;
+import engine.core.input.interfaces.IKeyboard;
+import engine.core.input.interfaces.IMouse;
 import engine.core.window.Window;
+import engine.core.window.interfaces.IWindow;
 
 public abstract class Application {
-    private final IWindow window;
+    private final Window window;
     private final IEventDispatcher eventDispatcher;
 
-    private final IKeyboard keyboard;
-    private final IMouse mouse;
+    private final Keyboard keyboard;
+    private final Mouse mouse;
 
     private boolean isRunning;
 
@@ -27,35 +27,40 @@ public abstract class Application {
     }
 
     protected abstract void init();
+
+    protected abstract void close();
+
     protected abstract void update(float delta);
 
     public void run() {
         init();
+        keyboard.initialize();
+        mouse.initialize();
 
         setRunning(true);
 
         window.show();
 
-        keyboard.start();
-        mouse.start();
+        try {
+            long lastTime = System.nanoTime();
 
-        long lastTime = System.nanoTime();
+            while (isRunning) {
+                final long currentTime = System.nanoTime();
+                final float elapsedTime = (float) ((currentTime - lastTime) * 0.000000001); // elapsed time as seconds
+                lastTime = currentTime;
 
-        while (isRunning) {
-            final long currentTime = System.nanoTime();
-            final float elapsedTime = (float) ((currentTime - lastTime) * 0.000000001); // elapsed time as seconds
-            lastTime = currentTime;
+                window.processMessages();
 
-            window.processMessages();
+                update(elapsedTime);
 
-            update(elapsedTime);
-
-            window.swapBuffers();
+                window.swapBuffers();
+            }
+        } finally {
+            keyboard.close();
+            mouse.close();
+            window.close();
+            close();
         }
-
-        keyboard.stop();
-        mouse.stop();
-        window.close();
     }
 
     protected IWindow getWindow() {

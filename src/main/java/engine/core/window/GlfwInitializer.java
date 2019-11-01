@@ -1,8 +1,8 @@
 package engine.core.window;
 
-import java.util.Objects;
-
 import org.lwjgl.glfw.GLFWErrorCallback;
+
+import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.*;
 

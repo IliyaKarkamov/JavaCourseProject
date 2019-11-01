@@ -12,7 +12,7 @@ import org.joml.Vector2f;
 
 import java.util.EnumMap;
 
-public class Mouse implements IMouse {
+public class Mouse implements IMouse, AutoCloseable {
     private IEventDispatcher eventDispatcher;
 
     private IEventListener buttonPressListener;
@@ -72,7 +72,7 @@ public class Mouse implements IMouse {
     }
 
     @Override
-    public void start() {
+    public void initialize() {
         eventDispatcher.addListener(MouseButtonPressEvent.class, buttonPressListener);
         eventDispatcher.addListener(MouseButtonReleaseEvent.class, buttonReleaseListener);
         eventDispatcher.addListener(MouseMoveEvent.class, mouseMoveListener);
@@ -82,17 +82,17 @@ public class Mouse implements IMouse {
     }
 
     @Override
-    public void stop() {
+    public boolean isActive() {
+        return isActive;
+    }
+
+    @Override
+    public void close() {
         eventDispatcher.removeListener(MouseButtonPressEvent.class, buttonPressListener);
         eventDispatcher.removeListener(MouseButtonReleaseEvent.class, buttonReleaseListener);
         eventDispatcher.removeListener(MouseMoveEvent.class, mouseMoveListener);
         eventDispatcher.removeListener(MouseScrollEvent.class, mouseScrollListener);
 
         isActive = false;
-    }
-
-    @Override
-    public boolean isActive() {
-        return isActive;
     }
 }

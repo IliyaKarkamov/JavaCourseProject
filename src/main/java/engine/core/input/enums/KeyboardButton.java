@@ -123,15 +123,11 @@ public enum KeyboardButton {
     RightSuper(347),
     Menu(348);
 
-    private final int value;
     private static final KeyboardButton[] values = KeyboardButton.values();
+    private final int value;
 
     KeyboardButton(int value) {
         this.value = value;
-    }
-
-    public int getValue() {
-        return value;
     }
 
     public static KeyboardButton getValue(int value) {
@@ -142,5 +138,9 @@ public enum KeyboardButton {
         }
 
         return KeyboardButton.Unknown;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

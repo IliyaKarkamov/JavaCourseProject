@@ -11,15 +11,11 @@ public enum MouseButton {
     MouseButton7(6),
     MouseButton8(7);
 
-    private final int value;
     private static final MouseButton[] values = MouseButton.values();
+    private final int value;
 
     MouseButton(int value) {
         this.value = value;
-    }
-
-    public int getValue() {
-        return value;
     }
 
     public static MouseButton getValue(int value) {
@@ -30,5 +26,9 @@ public enum MouseButton {
         }
 
         return MouseButton.Unknown;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

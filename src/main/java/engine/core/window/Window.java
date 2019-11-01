@@ -15,9 +15,9 @@ import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public final class Window implements IWindow {
+public final class Window implements IWindow, AutoCloseable {
     private IEventDispatcher eventDispatcher;
-    private long windowHandle = NULL;
+    private long windowHandle;
 
     private String title;
 
@@ -26,7 +26,7 @@ public final class Window implements IWindow {
 
     private boolean verticalSync = false;
 
-    Callback debugProc;
+    private Callback debugProc;
 
     public Window(IEventDispatcher eventDispatcher, String title, int width, int height) {
         this.eventDispatcher = eventDispatcher;
@@ -41,8 +41,9 @@ public final class Window implements IWindow {
 
         windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
 
-        if (windowHandle == NULL)
+        if (windowHandle == NULL) {
             throw new RuntimeException("Failed to create the GLFW window");
+        }
 
         glfwMakeContextCurrent(windowHandle);
 
@@ -55,8 +56,9 @@ public final class Window implements IWindow {
 
     @Override
     public void close() {
-        if (debugProc != null)
+        if (debugProc != null) {
             debugProc.free();
+        }
 
         glfwFreeCallbacks(windowHandle);
         glfwDestroyWindow(windowHandle);

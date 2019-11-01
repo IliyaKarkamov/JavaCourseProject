@@ -3,7 +3,6 @@ package engine.renderer.opengl;
 import engine.renderer.opengl.enums.TextureFormat;
 import engine.renderer.opengl.exceptions.TextureLoadException;
 import engine.renderer.opengl.interfaces.ITexture2D;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL46C;
 import org.lwjgl.system.MemoryStack;
 
@@ -14,7 +13,7 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.stb.STBImage.*;
 
-public class Texture2D implements ITexture2D {
+public class Texture2D implements ITexture2D, AutoCloseable {
     private int id;
     private int width;
     private int height;
@@ -42,26 +41,6 @@ public class Texture2D implements ITexture2D {
 
         GL46C.glGenerateMipmap(GL46C.GL_TEXTURE_2D);
         GL46C.glBindTexture(GL46C.GL_TEXTURE_2D, 0);
-    }
-
-    @Override
-    public void bind(int slot) {
-        GL46C.glBindTextureUnit(slot, id);
-    }
-
-    @Override
-    public TextureFormat getFormat() {
-        return format;
-    }
-
-    @Override
-    public int getWidth() {
-        return width;
-    }
-
-    @Override
-    public int getHeight() {
-        return height;
     }
 
     public static ITexture2D create(String resource) throws TextureLoadException {
@@ -108,5 +87,30 @@ public class Texture2D implements ITexture2D {
         }
 
         return texture;
+    }
+
+    @Override
+    public void bind(int slot) {
+        GL46C.glBindTextureUnit(slot, id);
+    }
+
+    @Override
+    public TextureFormat getFormat() {
+        return format;
+    }
+
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
+    @Override
+    public void close() {
+        GL46C.glDeleteTextures(id);
     }
 }

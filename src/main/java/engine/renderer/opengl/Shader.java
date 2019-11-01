@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-public class Shader implements IShader {
+public class Shader implements IShader, AutoCloseable {
     private int id;
     private String name;
     private Map<String, Integer> uniformLocation = new HashMap<>();
@@ -146,5 +146,11 @@ public class Shader implements IShader {
         uniformLocation.put(name, location);
 
         return location;
+    }
+
+    @Override
+    public void close() {
+        GL46C.glDeleteProgram(id);
+        uniformLocation.clear();
     }
 }

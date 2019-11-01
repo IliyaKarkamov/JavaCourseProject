@@ -10,8 +10,7 @@ public interface IMouse {
 
     Vector2f getScrollOffset();
 
-    void start();
-    void stop();
+    void initialize();
 
     boolean isActive();
 }

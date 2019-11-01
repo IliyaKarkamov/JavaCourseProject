@@ -9,7 +9,7 @@ import engine.core.input.interfaces.IKeyboard;
 
 import java.util.EnumMap;
 
-public class Keyboard implements IKeyboard {
+public class Keyboard implements IKeyboard, AutoCloseable {
     private IEventDispatcher eventDispatcher;
 
     private IEventListener keyPressListener;
@@ -39,7 +39,7 @@ public class Keyboard implements IKeyboard {
     }
 
     @Override
-    public void start() {
+    public void initialize() {
         eventDispatcher.addListener(KeyPressEvent.class, keyPressListener);
         eventDispatcher.addListener(KeyReleaseEvent.class, keyReleaseListener);
 
@@ -47,15 +47,15 @@ public class Keyboard implements IKeyboard {
     }
 
     @Override
-    public void stop() {
+    public boolean isActive() {
+        return isActive;
+    }
+
+    @Override
+    public void close() {
         eventDispatcher.removeListener(KeyPressEvent.class, keyPressListener);
         eventDispatcher.removeListener(KeyReleaseEvent.class, keyReleaseListener);
 
         isActive = false;
-    }
-
-    @Override
-    public boolean isActive() {
-        return isActive;
     }
 }

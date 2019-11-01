@@ -6,6 +6,8 @@ public interface ITexture2D {
     void bind(int slot);
 
     TextureFormat getFormat();
+
     int getWidth();
+
     int getHeight();
 }

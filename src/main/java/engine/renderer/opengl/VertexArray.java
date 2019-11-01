@@ -4,10 +4,8 @@ import engine.renderer.opengl.enums.DataType;
 import engine.renderer.opengl.interfaces.IIndexBuffer;
 import engine.renderer.opengl.interfaces.IVertexArray;
 import engine.renderer.opengl.interfaces.IVertexBuffer;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL46C;
 
-import java.nio.IntBuffer;
 import java.util.Vector;
 
 public class VertexArray implements IVertexArray, AutoCloseable {
@@ -57,14 +55,6 @@ public class VertexArray implements IVertexArray, AutoCloseable {
     }
 
     @Override
-    public void setIndexBuffer(IIndexBuffer indexBuffer) {
-        bind();
-        indexBuffer.bind();
-
-        this.indexBuffer = indexBuffer;
-    }
-
-    @Override
     public int getVertexBuffersCount() {
         return vertexBuffers.size();
     }
@@ -77,6 +67,14 @@ public class VertexArray implements IVertexArray, AutoCloseable {
     @Override
     public IIndexBuffer getIndexBuffer() {
         return indexBuffer;
+    }
+
+    @Override
+    public void setIndexBuffer(IIndexBuffer indexBuffer) {
+        bind();
+        indexBuffer.bind();
+
+        this.indexBuffer = indexBuffer;
     }
 
     @Override
