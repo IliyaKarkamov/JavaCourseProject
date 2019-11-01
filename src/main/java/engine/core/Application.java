@@ -8,10 +8,14 @@ import engine.core.input.interfaces.IKeyboard;
 import engine.core.input.interfaces.IMouse;
 import engine.core.window.Window;
 import engine.core.window.interfaces.IWindow;
+import engine.renderer.Context;
+import engine.renderer.interfaces.IContext;
 
 public abstract class Application {
-    private final Window window;
     private final IEventDispatcher eventDispatcher;
+    private final Window window;
+
+    private final IContext context;
 
     private final Keyboard keyboard;
     private final Mouse mouse;
@@ -21,6 +25,8 @@ public abstract class Application {
     protected Application() {
         eventDispatcher = new EventDispatcher();
         window = new Window(eventDispatcher, "Iliya's window", 800, 600);
+
+        context = new Context();
 
         keyboard = new Keyboard(eventDispatcher);
         mouse = new Mouse(eventDispatcher);
@@ -85,5 +91,9 @@ public abstract class Application {
 
     protected void setRunning(boolean running) {
         isRunning = running;
+    }
+
+    protected IContext getContext() {
+        return context;
     }
 }

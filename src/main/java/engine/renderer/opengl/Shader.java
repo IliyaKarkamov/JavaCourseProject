@@ -3,11 +3,14 @@ package engine.renderer.opengl;
 import engine.renderer.opengl.enums.DataType;
 import engine.renderer.opengl.exceptions.ShaderCompileException;
 import engine.renderer.opengl.exceptions.ShaderLinkException;
+import engine.renderer.opengl.exceptions.ShaderLoadException;
 import engine.renderer.opengl.interfaces.IShader;
 import org.joml.*;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL46C;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
@@ -16,7 +19,7 @@ import java.util.Vector;
 
 public class Shader implements IShader, AutoCloseable {
     private int id;
-    private String name;
+    private final String name;
     private Map<String, Integer> uniformLocation = new HashMap<>();
 
     public Shader(String name, String vertexSource, String fragmentSource) throws ShaderCompileException, ShaderLinkException {
@@ -84,6 +87,28 @@ public class Shader implements IShader, AutoCloseable {
         }
     }
 
+    public static IShader create(String shaderName, String vertexResource, String fragmentResource) throws ShaderLoadException, ShaderCompileException, ShaderLinkException {
+        String vertexSource;
+        String fragmentSource;
+
+        final ClassLoader classLoader = Shader.class.getClassLoader();
+
+        try (final InputStream vertexStream = classLoader.getResourceAsStream(vertexResource);
+             final InputStream fragmentStream = classLoader.getResourceAsStream(fragmentResource)) {
+
+            if (vertexStream == null || fragmentStream == null) {
+                throw new ShaderLoadException("Unable to load vertex or fragment shader resource.");
+            }
+
+            vertexSource = new String(vertexStream.readAllBytes());
+            fragmentSource = new String(fragmentStream.readAllBytes());
+        } catch (IOException e) {
+            throw new ShaderLoadException("Unable to load vertex or fragment shader resource. " + e.getMessage());
+        }
+
+        return new Shader(shaderName, vertexSource, fragmentSource);
+    }
+
     @Override
     public void bind() {
         GL46C.glUseProgram(id);
@@ -126,13 +151,13 @@ public class Shader implements IShader, AutoCloseable {
 
     @Override
     public void setUniform(String name, Matrix3f value) {
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(DataType.sizeOfType(DataType.Mat3));
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(9);
         GL46C.glUniformMatrix3fv(getUniformLocation(name), false, value.get(buffer));
     }
 
     @Override
     public void setUniform(String name, Matrix4f value) {
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(DataType.sizeOfType(DataType.Mat4));
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
         GL46C.glUniformMatrix4fv(getUniformLocation(name), false, value.get(buffer));
     }
 
