@@ -17,6 +17,7 @@ public class SandboxApplication extends Application {
     IVertexArray vertexArray;
 
     IVertexBuffer vertexBuffer;
+
     IIndexBuffer indexBuffer;
 
     IShader shader;
@@ -89,6 +90,10 @@ public class SandboxApplication extends Application {
         } catch (TextureLoadException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void close() {
     }
 
     @Override
