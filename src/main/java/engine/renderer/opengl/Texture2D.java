@@ -1,17 +1,10 @@
 package engine.renderer.opengl;
 
 import engine.renderer.opengl.enums.TextureFormat;
-import engine.renderer.opengl.exceptions.TextureLoadException;
 import engine.renderer.opengl.interfaces.ITexture2D;
 import org.lwjgl.opengl.GL46C;
-import org.lwjgl.system.MemoryStack;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-
-import static org.lwjgl.stb.STBImage.*;
 
 public class Texture2D implements ITexture2D, AutoCloseable {
     private int id;
@@ -21,6 +14,10 @@ public class Texture2D implements ITexture2D, AutoCloseable {
 
     public Texture2D(ByteBuffer data, int width, int height, TextureFormat format) {
         id = GL46C.glGenTextures();
+
+        this.width = width;
+        this.height = height;
+        this.format = format;
 
         GL46C.glBindTexture(GL46C.GL_TEXTURE_2D, id);
 
@@ -41,52 +38,6 @@ public class Texture2D implements ITexture2D, AutoCloseable {
 
         GL46C.glGenerateMipmap(GL46C.GL_TEXTURE_2D);
         GL46C.glBindTexture(GL46C.GL_TEXTURE_2D, 0);
-    }
-
-    public static ITexture2D create(String resource) throws TextureLoadException {
-        InputStream stream = Texture2D.class.getClassLoader().getResourceAsStream(resource);
-
-        if (stream == null) {
-            throw new TextureLoadException("Unable to open the given resource file. ");
-        }
-
-        ByteBuffer image;
-        int width, height;
-
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            ByteBuffer imageBuffer = stack.malloc(stream.available());
-            imageBuffer.put(stream.readAllBytes());
-            imageBuffer.flip();
-
-            IntBuffer w = stack.mallocInt(1);
-            IntBuffer h = stack.mallocInt(1);
-            IntBuffer comp = stack.mallocInt(1);
-
-            if (!stbi_info_from_memory(imageBuffer, w, h, comp)) {
-                throw new TextureLoadException("Failed to load a texture file." + System.lineSeparator() + stbi_failure_reason());
-            }
-
-            image = stbi_load_from_memory(imageBuffer, w, h, comp, STBI_rgb_alpha);
-
-            if (image == null) {
-                throw new TextureLoadException("Failed to load a texture file." + System.lineSeparator() + stbi_failure_reason());
-            }
-
-            width = w.get();
-            height = h.get();
-        } catch (IOException e) {
-            throw new TextureLoadException("Unable to read the given resource file. " + e.getMessage());
-        }
-
-        ITexture2D texture;
-
-        try {
-            texture = new Texture2D(image, width, height, TextureFormat.RGBA);
-        } finally {
-            stbi_image_free(image);
-        }
-
-        return texture;
     }
 
     @Override

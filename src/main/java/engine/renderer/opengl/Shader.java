@@ -1,16 +1,12 @@
 package engine.renderer.opengl;
 
-import engine.renderer.opengl.enums.DataType;
 import engine.renderer.opengl.exceptions.ShaderCompileException;
 import engine.renderer.opengl.exceptions.ShaderLinkException;
-import engine.renderer.opengl.exceptions.ShaderLoadException;
 import engine.renderer.opengl.interfaces.IShader;
 import org.joml.*;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL46C;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
@@ -85,28 +81,6 @@ public class Shader implements IShader, AutoCloseable {
             GL46C.glDetachShader(id, shaderId);
             GL46C.glDeleteShader(shaderId);
         }
-    }
-
-    public static IShader create(String shaderName, String vertexResource, String fragmentResource) throws ShaderLoadException, ShaderCompileException, ShaderLinkException {
-        String vertexSource;
-        String fragmentSource;
-
-        final ClassLoader classLoader = Shader.class.getClassLoader();
-
-        try (final InputStream vertexStream = classLoader.getResourceAsStream(vertexResource);
-             final InputStream fragmentStream = classLoader.getResourceAsStream(fragmentResource)) {
-
-            if (vertexStream == null || fragmentStream == null) {
-                throw new ShaderLoadException("Unable to load vertex or fragment shader resource.");
-            }
-
-            vertexSource = new String(vertexStream.readAllBytes());
-            fragmentSource = new String(fragmentStream.readAllBytes());
-        } catch (IOException e) {
-            throw new ShaderLoadException("Unable to load vertex or fragment shader resource. " + e.getMessage());
-        }
-
-        return new Shader(shaderName, vertexSource, fragmentSource);
     }
 
     @Override

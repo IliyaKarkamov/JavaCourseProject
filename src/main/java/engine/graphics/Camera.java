@@ -1,7 +1,7 @@
-package engine.renderer;
+package engine.graphics;
 
-import engine.renderer.enums.MoveDirection;
-import engine.renderer.interfaces.ICamera;
+import engine.graphics.enums.MoveDirection;
+import engine.graphics.interfaces.ICamera;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 

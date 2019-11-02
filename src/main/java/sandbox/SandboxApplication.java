@@ -4,9 +4,9 @@ import engine.core.Application;
 import engine.core.input.enums.KeyboardButton;
 import engine.core.input.enums.MouseButton;
 import engine.core.window.events.WindowCloseEvent;
-import engine.renderer.Camera;
-import engine.renderer.enums.MoveDirection;
-import engine.renderer.interfaces.ICamera;
+import engine.graphics.Camera;
+import engine.graphics.enums.MoveDirection;
+import engine.graphics.interfaces.ICamera;
 import engine.renderer.opengl.*;
 import engine.renderer.opengl.enums.BufferUsage;
 import engine.renderer.opengl.enums.Capability;
@@ -14,8 +14,8 @@ import engine.renderer.opengl.enums.DataType;
 import engine.renderer.opengl.exceptions.ShaderCompileException;
 import engine.renderer.opengl.exceptions.ShaderLinkException;
 import engine.renderer.opengl.exceptions.ShaderLoadException;
-import engine.renderer.opengl.exceptions.TextureLoadException;
 import engine.renderer.opengl.interfaces.*;
+import engine.resources.exceptions.ResourceLoadException;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -110,14 +110,9 @@ public class SandboxApplication extends Application {
         vertexArray.setIndexBuffer(indexBuffer);
 
         try {
-            shader = Shader.create("simple", "shaders/simple/vertex.glsl", "shaders/simple/fragment.glsl");
-        } catch (ShaderCompileException | ShaderLinkException | ShaderLoadException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            texture = Texture2D.create("assets/logo.png");
-        } catch (TextureLoadException e) {
+            shader = getResourceManager().get(IShader.class, "shaders/simple/simple");
+            texture = getResourceManager().get(ITexture2D.class, "assets/logo.png");
+        } catch (ResourceLoadException e) {
             e.printStackTrace();
         }
 
@@ -135,7 +130,6 @@ public class SandboxApplication extends Application {
         final float speed = 15.f * delta;
         final float dragSpeed = 20.f * delta;
         final Vector2f position = getMouse().getMousePosition();
-
 
         if (getKeyboard().isKeyPressed(KeyboardButton.A)) {
             camera.move(MoveDirection.Left, speed);

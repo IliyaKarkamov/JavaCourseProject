@@ -11,6 +11,10 @@ import engine.core.window.events.WindowResizeEvent;
 import engine.core.window.interfaces.IWindow;
 import engine.renderer.Context;
 import engine.renderer.interfaces.IContext;
+import engine.resources.ResourceManager;
+import engine.resources.factories.ShaderFactory;
+import engine.resources.factories.TextureFactory;
+import engine.resources.interfaces.IResourceManager;
 
 public abstract class Application {
     private final IEventDispatcher eventDispatcher;
@@ -20,6 +24,8 @@ public abstract class Application {
 
     private final Keyboard keyboard;
     private final Mouse mouse;
+
+    private final IResourceManager resourceManager;
 
     private boolean isRunning;
 
@@ -31,6 +37,10 @@ public abstract class Application {
 
         keyboard = new Keyboard(eventDispatcher);
         mouse = new Mouse(eventDispatcher);
+
+        resourceManager = new ResourceManager();
+        resourceManager.registerFactory(new TextureFactory());
+        resourceManager.registerFactory(new ShaderFactory());
 
         eventDispatcher.addListener(WindowResizeEvent.class, event -> {
             WindowResizeEvent resizeEvent = (WindowResizeEvent) event;
@@ -76,12 +86,16 @@ public abstract class Application {
         }
     }
 
+    protected IEventDispatcher getEventDispatcher() {
+        return eventDispatcher;
+    }
+
     protected IWindow getWindow() {
         return window;
     }
 
-    protected IEventDispatcher getEventDispatcher() {
-        return eventDispatcher;
+    protected IContext getContext() {
+        return context;
     }
 
     protected IKeyboard getKeyboard() {
@@ -92,15 +106,15 @@ public abstract class Application {
         return mouse;
     }
 
+    protected IResourceManager getResourceManager() {
+        return resourceManager;
+    }
+
     protected boolean isRunning() {
         return isRunning;
     }
 
     protected void setRunning(boolean running) {
         isRunning = running;
-    }
-
-    protected IContext getContext() {
-        return context;
     }
 }

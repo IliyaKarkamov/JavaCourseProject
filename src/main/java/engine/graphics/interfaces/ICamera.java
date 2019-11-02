@@ -1,6 +1,6 @@
-package engine.renderer.interfaces;
+package engine.graphics.interfaces;
 
-import engine.renderer.enums.MoveDirection;
+import engine.graphics.enums.MoveDirection;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 

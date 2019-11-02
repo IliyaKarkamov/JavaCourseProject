@@ -1,4 +1,4 @@
-package engine.renderer.enums;
+package engine.graphics.enums;
 
 public enum MoveDirection {
     Left,
