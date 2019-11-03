@@ -26,7 +26,7 @@ void main()
     float nDot1 = dot(unitNormal, unitLightVector);
     float brightness = max(nDot1, 0.1);
 
-    vec3 diffuse = brightness * vec3(1.0, 1.0, 1.0);d
+    vec3 diffuse = brightness * vec3(1.0, 1.0, 1.0);
 
 
     FragColor = vec4(diffuse, 1.0) * texture(material.diffuseTexture, TexCoord);
