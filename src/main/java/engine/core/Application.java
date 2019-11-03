@@ -2,6 +2,7 @@ package engine.core;
 
 import engine.core.events.EventDispatcher;
 import engine.core.events.interfaces.IEventDispatcher;
+import engine.core.exceptions.ApplicationInitException;
 import engine.core.input.Keyboard;
 import engine.core.input.Mouse;
 import engine.core.input.interfaces.IKeyboard;
@@ -12,6 +13,7 @@ import engine.core.window.interfaces.IWindow;
 import engine.renderer.Context;
 import engine.renderer.interfaces.IContext;
 import engine.resources.ResourceManager;
+import engine.resources.factories.ModelFactory;
 import engine.resources.factories.ShaderFactory;
 import engine.resources.factories.TextureFactory;
 import engine.resources.interfaces.IResourceManager;
@@ -41,6 +43,7 @@ public abstract class Application {
         resourceManager = new ResourceManager();
         resourceManager.registerFactory(new TextureFactory());
         resourceManager.registerFactory(new ShaderFactory());
+        resourceManager.registerFactory(new ModelFactory(resourceManager));
 
         eventDispatcher.addListener(WindowResizeEvent.class, event -> {
             WindowResizeEvent resizeEvent = (WindowResizeEvent) event;
@@ -49,13 +52,13 @@ public abstract class Application {
         });
     }
 
-    protected abstract void init();
+    protected abstract void init() throws ApplicationInitException;
 
     protected abstract void close();
 
     protected abstract void update(float delta);
 
-    public void run() {
+    public void run() throws ApplicationInitException {
         init();
         keyboard.initialize();
         mouse.initialize();

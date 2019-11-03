@@ -7,6 +7,7 @@ import engine.renderer.opengl.exceptions.ShaderLoadException;
 import engine.renderer.opengl.interfaces.IShader;
 import engine.resources.exceptions.ResourceLoadException;
 import engine.resources.interfaces.IResourceFactory;
+import engine.resources.interfaces.IResourceManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,5 +43,10 @@ public class ShaderFactory implements IResourceFactory<IShader> {
         } catch (ShaderLoadException | ShaderCompileException | ShaderLinkException e) {
             throw new ResourceLoadException("Shader resource creation failed.", e);
         }
+    }
+
+    @Override
+    public IResourceManager getResourceManager() {
+        return null;
     }
 }

@@ -6,6 +6,8 @@ import engine.renderer.opengl.exceptions.TextureLoadException;
 import engine.renderer.opengl.interfaces.ITexture2D;
 import engine.resources.exceptions.ResourceLoadException;
 import engine.resources.interfaces.IResourceFactory;
+import engine.resources.interfaces.IResourceManager;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
@@ -34,7 +36,7 @@ public class TextureFactory implements IResourceFactory<ITexture2D> {
             int width, height;
 
             try (MemoryStack stack = MemoryStack.stackPush()) {
-                ByteBuffer imageBuffer = stack.malloc(stream.available());
+                ByteBuffer imageBuffer = BufferUtils.createByteBuffer(stream.available());
                 imageBuffer.put(stream.readAllBytes());
                 imageBuffer.flip();
 
@@ -45,6 +47,8 @@ public class TextureFactory implements IResourceFactory<ITexture2D> {
                 if (!stbi_info_from_memory(imageBuffer, w, h, comp)) {
                     throw new TextureLoadException("Failed to load a texture file." + System.lineSeparator() + stbi_failure_reason());
                 }
+
+                stbi_set_flip_vertically_on_load(true);
 
                 image = stbi_load_from_memory(imageBuffer, w, h, comp, STBI_rgb_alpha);
 
@@ -70,5 +74,10 @@ public class TextureFactory implements IResourceFactory<ITexture2D> {
         } catch (TextureLoadException e) {
             throw new ResourceLoadException("Texture resource creation failed!", e);
         }
+    }
+
+    @Override
+    public IResourceManager getResourceManager() {
+        return null;
     }
 }
