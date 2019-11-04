@@ -10,8 +10,7 @@ import engine.resources.interfaces.IResourceManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
@@ -26,11 +25,7 @@ public class TextureFactory implements IResourceFactory<ITexture2D> {
     @Override
     public ITexture2D create(String resource) throws ResourceLoadException {
         try {
-            InputStream stream = Texture2D.class.getClassLoader().getResourceAsStream(resource);
-
-            if (stream == null) {
-                throw new TextureLoadException("Unable to open the given resource file.");
-            }
+            InputStream stream = new FileInputStream(new File(resource));
 
             ByteBuffer image;
             int width, height;
@@ -71,7 +66,7 @@ public class TextureFactory implements IResourceFactory<ITexture2D> {
             }
 
             return texture;
-        } catch (TextureLoadException e) {
+        } catch (TextureLoadException | FileNotFoundException e) {
             throw new ResourceLoadException("Texture resource creation failed!", e);
         }
     }

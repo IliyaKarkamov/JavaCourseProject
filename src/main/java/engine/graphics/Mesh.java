@@ -58,16 +58,27 @@ public class Mesh {
         shader.bind();
         vertexArray.bind();
 
-        shader.setUniform("material.ambientColor", material.getAmbientColor());
-        shader.setUniform("material.diffuseColor", material.getDiffuseColor());
-        shader.setUniform("material.specularColor", material.getSpecularColor());
         shader.setUniform("material.shininess", material.getShininess());
 
-        final ITexture2D texture = material.getDiffuseTexture();
+        final ITexture2D diffuseTexture = material.getDiffuseTexture();
 
-        if (texture != null) {
-            texture.bind(0);
-            shader.setUniform("material.diffuseTexture", 0);
+        if (diffuseTexture != null) {
+            diffuseTexture.bind(0);
+            shader.setUniform("material.diffuse", 0);
+        }
+
+        final ITexture2D specularTexture = material.getSpecularTexture();
+
+        if (specularTexture != null) {
+            specularTexture.bind(1);
+            shader.setUniform("material.specular", 1);
+        }
+
+        final ITexture2D emissionTexture = material.getEmissionTexture();
+
+        if (emissionTexture != null) {
+            emissionTexture.bind(2);
+            shader.setUniform("material.emission", 2);
         }
 
         context.drawIndexed(vertexArray);

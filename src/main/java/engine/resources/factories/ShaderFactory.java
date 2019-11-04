@@ -9,6 +9,8 @@ import engine.resources.exceptions.ResourceLoadException;
 import engine.resources.interfaces.IResourceFactory;
 import engine.resources.interfaces.IResourceManager;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -24,14 +26,8 @@ public class ShaderFactory implements IResourceFactory<IShader> {
             String vertexSource;
             String fragmentSource;
 
-            final ClassLoader classLoader = Shader.class.getClassLoader();
-
-            try (final InputStream vertexStream = classLoader.getResourceAsStream(resource + ".vert.glsl");
-                 final InputStream fragmentStream = classLoader.getResourceAsStream(resource + ".frag.glsl")) {
-
-                if (vertexStream == null || fragmentStream == null) {
-                    throw new ShaderLoadException("Unable to load vertex or fragment shader resource.");
-                }
+            try (final InputStream vertexStream = new FileInputStream(new File(resource + ".vert.glsl"));
+                 final InputStream fragmentStream = new FileInputStream(new File(resource + ".frag.glsl"))) {
 
                 vertexSource = new String(vertexStream.readAllBytes());
                 fragmentSource = new String(fragmentStream.readAllBytes());

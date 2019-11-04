@@ -1,57 +1,19 @@
 package engine.graphics;
 
 import engine.renderer.opengl.interfaces.ITexture2D;
-import org.joml.Vector4f;
 
 public class Material {
-    private static final Vector4f DEFAULT_COLOR = new Vector4f(1.f, 1.f, 1.f, 1.f);
-
-    private Vector4f ambientColor;
-    private Vector4f diffuseColor;
-    private Vector4f specularColor;
+    private ITexture2D diffuseTexture;
+    private ITexture2D specularTexture;
+    private ITexture2D emissionTexture;
 
     private float shininess;
 
-    private ITexture2D diffuseTexture;
-
     public Material() {
-        ambientColor = DEFAULT_COLOR;
-        diffuseColor = DEFAULT_COLOR;
-        specularColor = DEFAULT_COLOR;
         shininess = 0.f;
         diffuseTexture = null;
-    }
-
-    public Vector4f getAmbientColor() {
-        return ambientColor;
-    }
-
-    public void setAmbientColor(Vector4f ambientColor) {
-        this.ambientColor = ambientColor;
-    }
-
-    public Vector4f getDiffuseColor() {
-        return diffuseColor;
-    }
-
-    public void setDiffuseColor(Vector4f diffuseColor) {
-        this.diffuseColor = diffuseColor;
-    }
-
-    public Vector4f getSpecularColor() {
-        return specularColor;
-    }
-
-    public void setSpecularColor(Vector4f specularColor) {
-        this.specularColor = specularColor;
-    }
-
-    public float getShininess() {
-        return shininess;
-    }
-
-    public void setShininess(float shininess) {
-        this.shininess = shininess;
+        specularTexture = null;
+        emissionTexture = null;
     }
 
     public ITexture2D getDiffuseTexture() {
@@ -60,5 +22,29 @@ public class Material {
 
     public void setDiffuseTexture(ITexture2D diffuseTexture) {
         this.diffuseTexture = diffuseTexture;
+    }
+
+    public ITexture2D getSpecularTexture() {
+        return specularTexture;
+    }
+
+    public void setSpecularTexture(ITexture2D specularTexture) {
+        this.specularTexture = specularTexture;
+    }
+
+    public ITexture2D getEmissionTexture() {
+        return emissionTexture;
+    }
+
+    public void setEmissionTexture(ITexture2D emissionTexture) {
+        this.emissionTexture = emissionTexture;
+    }
+
+    public float getShininess() {
+        return shininess;
+    }
+
+    public void setShininess(float shininess) {
+        this.shininess = shininess;
     }
 }

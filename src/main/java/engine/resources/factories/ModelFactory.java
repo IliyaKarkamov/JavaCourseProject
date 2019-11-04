@@ -9,14 +9,9 @@ import engine.renderer.opengl.interfaces.ITexture2D;
 import engine.resources.exceptions.ResourceLoadException;
 import engine.resources.interfaces.IResourceFactory;
 import engine.resources.interfaces.IResourceManager;
-import org.joml.Vector4f;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Objects;
 import java.util.Vector;
@@ -35,37 +30,22 @@ public class ModelFactory implements IResourceFactory<IModel> {
 
     @Override
     public IModel create(String resource) throws ResourceLoadException {
-        InputStream stream = ModelFactory.class.getClassLoader().getResourceAsStream(resource);
+        AIScene aiScene = Assimp.aiImportFile(resource, Assimp.aiProcess_JoinIdenticalVertices |
+                Assimp.aiProcess_Triangulate | Assimp.aiProcess_FixInfacingNormals);
 
-        if (stream == null) {
-            throw new ResourceLoadException("Unable to open the given resource file.");
+        if ((aiScene == null) || (aiScene.mFlags() & Assimp.AI_SCENE_FLAGS_INCOMPLETE) == 1 || (aiScene.mRootNode() == null)) {
+            throw new ResourceLoadException("Model not loaded correctly. Error: " + Assimp.aiGetErrorString());
         }
 
-        try {
-            ByteBuffer imageBuffer = BufferUtils.createByteBuffer(stream.available());
-            imageBuffer.put(stream.readAllBytes());
-            imageBuffer.flip();
+        IModel model = new Model();
+        Vector<Material> materials = new Vector<>(10);
 
-            AIScene aiScene = Assimp.aiImportFileFromMemory(imageBuffer, Assimp.aiProcess_JoinIdenticalVertices |
-                            Assimp.aiProcess_Triangulate | Assimp.aiProcess_FixInfacingNormals,
-                    resource.substring(resource.lastIndexOf('.') + 1));
+        processMaterials(aiScene, materials);
+        processNode(model, Objects.requireNonNull(aiScene.mRootNode()), aiScene, materials);
 
-            if ((aiScene == null) || (aiScene.mFlags() & Assimp.AI_SCENE_FLAGS_INCOMPLETE) == 1 || (aiScene.mRootNode() == null)) {
-                throw new ResourceLoadException("Model not loaded correctly. Error: " + Assimp.aiGetErrorString());
-            }
+        aiScene.free();
 
-            IModel model = new Model();
-            Vector<Material> materials = new Vector<>(10);
-
-            processMaterials(aiScene, materials);
-            processNode(model, Objects.requireNonNull(aiScene.mRootNode()), aiScene, materials);
-
-            aiScene.free();
-
-            return model;
-        } catch (IOException e) {
-            throw new ResourceLoadException("Model resource creation failed!", e);
-        }
+        return model;
     }
 
     @Override
@@ -206,49 +186,15 @@ public class ModelFactory implements IResourceFactory<IModel> {
     }
 
     private void processMaterial(AIMaterial aiMaterial, Vector<Material> materials) throws ResourceLoadException {
-        Vector4f ambientColor = null;
-        Vector4f diffuseColor = null;
-        Vector4f specularColor = null;
+        ITexture2D diffuseTexture;
+        ITexture2D specularTexture;
+        ITexture2D emissionTexture;
 
-        ITexture2D texture = null;
         float shininess;
 
-        {
-            AIString path = AIString.calloc();
-            Assimp.aiGetMaterialTexture(aiMaterial, Assimp.aiTextureType_DIFFUSE, 0, path, (IntBuffer) null, null, null, null, null, null);
-            String texturePath = path.dataString();
-
-            if (texturePath != null && texturePath.length() > 0) {
-                texture = getResourceManager().get(ITexture2D.class, texturePath);
-            }
-        }
-
-        {
-            AIColor4D color = AIColor4D.create();
-            int result = Assimp.aiGetMaterialColor(aiMaterial, Assimp.AI_MATKEY_COLOR_AMBIENT, Assimp.aiTextureType_NONE, 0, color);
-
-            if (result == 0) {
-                ambientColor = new Vector4f(color.r(), color.g(), color.b(), color.a());
-            }
-        }
-
-        {
-            AIColor4D color = AIColor4D.create();
-            int result = Assimp.aiGetMaterialColor(aiMaterial, Assimp.AI_MATKEY_COLOR_DIFFUSE, Assimp.aiTextureType_NONE, 0, color);
-
-            if (result == 0) {
-                diffuseColor = new Vector4f(color.r(), color.g(), color.b(), color.a());
-            }
-        }
-
-        {
-            AIColor4D color = AIColor4D.create();
-            int result = Assimp.aiGetMaterialColor(aiMaterial, Assimp.AI_MATKEY_COLOR_SPECULAR, Assimp.aiTextureType_NONE, 0, color);
-
-            if (result == 0) {
-                specularColor = new Vector4f(color.r(), color.g(), color.b(), color.a());
-            }
-        }
+        diffuseTexture = processTexture(aiMaterial, Assimp.aiTextureType_DIFFUSE);
+        specularTexture = processTexture(aiMaterial, Assimp.aiTextureType_SPECULAR);
+        emissionTexture = processTexture(aiMaterial, Assimp.aiTextureType_EMISSIVE);
 
         {
             float[] floatBuf = new float[1];
@@ -261,12 +207,25 @@ public class ModelFactory implements IResourceFactory<IModel> {
 
         Material material = new Material();
 
-        material.setAmbientColor(ambientColor);
-        material.setDiffuseColor(diffuseColor);
-        material.setSpecularColor(specularColor);
-        material.setDiffuseTexture(texture);
+        material.setDiffuseTexture(diffuseTexture);
+        material.setSpecularTexture(specularTexture);
+        material.setEmissionTexture(emissionTexture);
         material.setShininess(shininess);
 
         materials.add(material);
+    }
+
+    private ITexture2D processTexture(AIMaterial aiMaterial, int textureType) throws ResourceLoadException {
+        AIString path = AIString.calloc();
+        Assimp.aiGetMaterialTexture(aiMaterial, textureType, 0, path, (IntBuffer) null, null, null, null, null, null);
+        String texturePath = path.dataString();
+
+        ITexture2D texture = null;
+
+        if (texturePath != null && texturePath.length() > 0) {
+            texture = getResourceManager().get(ITexture2D.class, texturePath);
+        }
+
+        return texture;
     }
 }

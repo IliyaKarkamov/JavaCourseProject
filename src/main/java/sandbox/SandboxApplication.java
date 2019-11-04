@@ -6,6 +6,7 @@ import engine.core.input.enums.KeyboardButton;
 import engine.core.input.enums.MouseButton;
 import engine.core.window.events.WindowCloseEvent;
 import engine.graphics.Camera;
+import engine.graphics.Light;
 import engine.graphics.enums.MoveDirection;
 import engine.graphics.interfaces.ICamera;
 import engine.graphics.interfaces.IModel;
@@ -22,6 +23,8 @@ public class SandboxApplication extends Application {
 
     private IModel model;
 
+    private Light light;
+
     private Vector2f mousePosition = null;
 
     SandboxApplication() {
@@ -34,16 +37,22 @@ public class SandboxApplication extends Application {
     @Override
     protected void init() throws ApplicationInitException {
         try {
-            shader = getResourceManager().get(IShader.class, "shaders/simple/simple");
+            shader = getResourceManager().get(IShader.class, "D:/Projects/JavaCourseProject/resources/shaders/simple/simple");
             camera = new Camera(new Vector3f(100.f, 100.f, 50f));
 
-            model = getResourceManager().get(IModel.class, "assets/models/ba2/ba2.dae");
+            model = getResourceManager().get(IModel.class, "D:/Projects/JavaCourseProject/resources/assets/models/ba2/Quandtum_BA-2_v1_1.dae");
+
+            light = new Light();
+            light.setPosition(new Vector3f(150.f, 200.f, -50.f));
+            light.setAmbient(new Vector3f(0.2f, 0.2f, 0.2f));
+            light.setDiffuse(new Vector3f(0.5f, 0.5f, 0.5f));
+            light.setSpecular(new Vector3f(1.0f, 1.0f, 1.0f));
 
             getContext().enable(Capability.CullFace);
             getContext().enable(Capability.DepthTest);
             getContext().enable(Capability.Blend);
         } catch (ResourceLoadException e) {
-            throw new ApplicationInitException("dadas", e);
+            throw new ApplicationInitException("Failed to initialize the application.", e);
         }
     }
 
@@ -93,12 +102,18 @@ public class SandboxApplication extends Application {
 
         shader.bind();
 
+        shader.setUniform("light.position", light.getPosition());
+        shader.setUniform("light.ambient", light.getAmbient());
+        shader.setUniform("light.diffuse", light.getDiffuse());
+        shader.setUniform("light.specular", light.getSpecular());
+        shader.setUniform("viewPos", camera.getPosition());
+
         Matrix4f projection = new Matrix4f();
         projection.perspective((float) Math.toRadians(camera.getZoom()), 16.f / 9.f, 0.01f, 100.0f);
         shader.setUniform("projection", projection);
 
         Matrix4f model = new Matrix4f();
-        model = model.translate(100.f, 100.f, -20.f);
+        model = model.translate(100.f, 100.f, -20.f).rotate((float) Math.toRadians(-90.f), new Vector3f(1,0,0));
         shader.setUniform("model", model);
         shader.setUniform("view", camera.getViewMatrix());
 
