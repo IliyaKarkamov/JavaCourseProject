@@ -22,6 +22,7 @@ public class Mouse implements IMouse, AutoCloseable {
 
     private EnumMap<MouseButton, Boolean> states = new EnumMap<>(MouseButton.class);
     private Vector2f mousePosition = new Vector2f();
+    private Vector2f mouseLastPosition = new Vector2f();
     private Vector2f mouseScrollOffset = new Vector2f();
 
     private boolean isActive = false;
@@ -41,6 +42,10 @@ public class Mouse implements IMouse, AutoCloseable {
 
         this.mouseMoveListener = event -> {
             MouseMoveEvent mouseMoveEvent = (MouseMoveEvent) event;
+
+            mouseLastPosition.x = mousePosition.x;
+            mouseLastPosition.y = mousePosition.y;
+
             mousePosition.set(mouseMoveEvent.getX(), mouseMoveEvent.getY());
             return false;
         };
@@ -58,8 +63,18 @@ public class Mouse implements IMouse, AutoCloseable {
     }
 
     @Override
-    public Vector2f getMousePosition() {
+    public Vector2f getPosition() {
         return mousePosition;
+    }
+
+    @Override
+    public Vector2f getPositionOffset() {
+        try {
+            return mousePosition.sub(mouseLastPosition, new Vector2f());
+        } finally {
+            mouseLastPosition.x = mousePosition.x;
+            mouseLastPosition.y = mousePosition.y;
+        }
     }
 
     @Override

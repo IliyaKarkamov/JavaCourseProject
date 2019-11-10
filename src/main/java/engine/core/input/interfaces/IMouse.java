@@ -6,7 +6,8 @@ import org.joml.Vector2f;
 public interface IMouse {
     boolean isButtonPressed(MouseButton button);
 
-    Vector2f getMousePosition();
+    Vector2f getPosition();
+    Vector2f getPositionOffset();
 
     Vector2f getScrollOffset();
 

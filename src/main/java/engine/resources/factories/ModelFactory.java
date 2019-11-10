@@ -88,6 +88,12 @@ public class ModelFactory implements IResourceFactory<IModel> {
         processTextureCoords(aiMesh, texCoords);
         processIndices(aiMesh, indices);
 
+        if (normals.isEmpty() && !positions.isEmpty()) {
+            for (Float position : positions) {
+                normals.add((float) 0.0);
+            }
+        }
+
         final int materialIndex = aiMesh.mMaterialIndex();
 
         Material material;
