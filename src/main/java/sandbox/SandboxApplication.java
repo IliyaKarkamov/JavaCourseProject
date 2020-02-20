@@ -38,10 +38,10 @@ public class SandboxApplication extends Application {
         try {
             getWindow().setVerticalSync(false);
 
-            shader = getResourceManager().get(IShader.class, "D:/Projects/JavaCourseProject/resources/shaders/simple/simple");
+            shader = getResourceManager().get(IShader.class, "shaders/simple/simple");
             camera = new Camera(new Vector3f(100.f, 100.f, 50f));
 
-            model = getResourceManager().get(IModel.class, "D:/Projects/JavaCourseProject/resources/assets/models/ba2/Quandtum_BA-2_v1_1.dae");
+            model = getResourceManager().get(IModel.class, "assets/models/ba2/Quandtum_BA-2_v1_1.dae");
 
             light = new Light();
             light.setPosition(new Vector3f(150.f, 200.f, -50.f));

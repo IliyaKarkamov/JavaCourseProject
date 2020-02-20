@@ -26,8 +26,14 @@ public class ShaderFactory implements IResourceFactory<IShader> {
             String vertexSource;
             String fragmentSource;
 
-            try (final InputStream vertexStream = new FileInputStream(new File(resource + ".vert.glsl"));
-                 final InputStream fragmentStream = new FileInputStream(new File(resource + ".frag.glsl"))) {
+            final ClassLoader classLoader = Shader.class.getClassLoader();
+
+            try (final InputStream vertexStream = classLoader.getResourceAsStream(resource + ".vert.glsl");
+                 final InputStream fragmentStream = classLoader.getResourceAsStream(resource + ".frag.glsl")) {
+
+                if (vertexStream == null || fragmentStream == null) {
+                    throw new ShaderLoadException("Unable to load vertex or fragment shader resource.");
+                }
 
                 vertexSource = new String(vertexStream.readAllBytes());
                 fragmentSource = new String(fragmentStream.readAllBytes());

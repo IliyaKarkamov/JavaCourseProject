@@ -9,9 +9,13 @@ import engine.renderer.opengl.interfaces.ITexture2D;
 import engine.resources.exceptions.ResourceLoadException;
 import engine.resources.interfaces.IResourceFactory;
 import engine.resources.interfaces.IResourceManager;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Objects;
 import java.util.Vector;
@@ -30,22 +34,37 @@ public class ModelFactory implements IResourceFactory<IModel> {
 
     @Override
     public IModel create(String resource) throws ResourceLoadException {
-        AIScene aiScene = Assimp.aiImportFile(resource, Assimp.aiProcess_JoinIdenticalVertices |
-                Assimp.aiProcess_Triangulate | Assimp.aiProcess_FixInfacingNormals);
+        InputStream stream = ModelFactory.class.getClassLoader().getResourceAsStream(resource);
 
-        if ((aiScene == null) || (aiScene.mFlags() & Assimp.AI_SCENE_FLAGS_INCOMPLETE) == 1 || (aiScene.mRootNode() == null)) {
-            throw new ResourceLoadException("Model not loaded correctly. Error: " + Assimp.aiGetErrorString());
+        if (stream == null) {
+            throw new ResourceLoadException("Unable to open the given resource file.");
         }
 
-        IModel model = new Model();
-        Vector<Material> materials = new Vector<>(10);
+        try {
+            ByteBuffer imageBuffer = BufferUtils.createByteBuffer(stream.available());
+            imageBuffer.put(stream.readAllBytes());
+            imageBuffer.flip();
 
-        processMaterials(aiScene, materials);
-        processNode(model, Objects.requireNonNull(aiScene.mRootNode()), aiScene, materials);
+            AIScene aiScene = Assimp.aiImportFileFromMemory(imageBuffer, Assimp.aiProcess_JoinIdenticalVertices |
+                            Assimp.aiProcess_Triangulate | Assimp.aiProcess_FixInfacingNormals,
+                    resource.substring(resource.lastIndexOf('.') + 1));
 
-        aiScene.free();
+            if ((aiScene == null) || (aiScene.mFlags() & Assimp.AI_SCENE_FLAGS_INCOMPLETE) == 1 || (aiScene.mRootNode() == null)) {
+                throw new ResourceLoadException("Model not loaded correctly. Error: " + Assimp.aiGetErrorString());
+            }
 
-        return model;
+            IModel model = new Model();
+            Vector<Material> materials = new Vector<>(10);
+
+            processMaterials(aiScene, materials);
+            processNode(model, Objects.requireNonNull(aiScene.mRootNode()), aiScene, materials);
+
+            aiScene.free();
+
+            return model;
+        } catch (IOException e) {
+            throw new ResourceLoadException("Model resource creation failed!", e);
+        }
     }
 
     @Override

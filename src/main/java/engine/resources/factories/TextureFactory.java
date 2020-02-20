@@ -25,7 +25,11 @@ public class TextureFactory implements IResourceFactory<ITexture2D> {
     @Override
     public ITexture2D create(String resource) throws ResourceLoadException {
         try {
-            InputStream stream = new FileInputStream(new File(resource));
+            InputStream stream = Texture2D.class.getClassLoader().getResourceAsStream(resource);
+
+            if (stream == null) {
+                throw new TextureLoadException("Unable to open the given resource file.");
+            }
 
             ByteBuffer image;
             int width, height;
@@ -66,7 +70,7 @@ public class TextureFactory implements IResourceFactory<ITexture2D> {
             }
 
             return texture;
-        } catch (TextureLoadException | FileNotFoundException e) {
+        } catch (TextureLoadException e) {
             throw new ResourceLoadException("Texture resource creation failed!", e);
         }
     }

@@ -310,19 +310,19 @@
   </library_lights>
   <library_images>
     <image id="Turret-Diffuse_jpg" name="Turret-Diffuse_jpg">
-      <init_from>D:\Projects\JavaCourseProject\resources\assets\models\ba2\Turret-Emission.jpg</init_from>
+      <init_from>assets\models\ba2\Turret-Emission.jpg</init_from>
     </image>
     <image id="Turret-Normal_jpg" name="Turret-Normal_jpg">
-      <init_from>D:\Projects\JavaCourseProject\resources\assets\models\ba2\Turret-Normal.jpg</init_from>
+      <init_from>assets\models\ba2\Turret-Normal.jpg</init_from>
     </image>
     <image id="Turret-Bump_jpg" name="Turret-Bump_jpg">
-      <init_from>D:\Projects\JavaCourseProject\resources\assets\models\ba2\Turret-Bump.jpg</init_from>
+      <init_from>assets\models\ba2\Turret-Bump.jpg</init_from>
     </image>
     <image id="SPECULAR_Character_jpg" name="SPECULAR_Character_jpg">
-      <init_from>D:\Projects\JavaCourseProject\resources\assets\models\ba2\SPECULAR_Character.jpg</init_from>
+      <init_from>assets\models\ba2\SPECULAR_Character.jpg</init_from>
     </image>
     <image id="Turret-Emission_jpg" name="Turret-Emission_jpg">
-      <init_from>D:\Projects\JavaCourseProject\resources\assets\models\ba2\Turret-Diffuse.jpg</init_from>
+      <init_from>assets\models\ba2\Turret-Diffuse.jpg</init_from>
     </image>
   </library_images>
   <library_effects>
